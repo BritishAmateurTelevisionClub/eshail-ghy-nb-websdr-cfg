@@ -2,7 +2,7 @@ websdr
 websdr64
 websdr-rpi
 
-logs/
+log/
 userslog.txt
 log-cpuload.txt
 pub/logbook.txt
