@@ -1,0 +1,14 @@
+[Unit]
+Description=NB WebSDR Server
+After=syslog.target
+
+[Service]
+Type=simple
+User=websdr-nb
+ExecStart=/usr/bin/stdbuf -oL -eL {{directory}}/websdr64
+WorkingDirectory={{directory}}
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
