@@ -116,10 +116,16 @@ function send_soundsettings_to_server()
 {
   var m=mode;
   if (m=="USB") m=0;
+  else if (m=="USBN") m=0;
   else if (m=="LSB") m=0;
+  else if (m=="LSBN") m=0;
   else if (m=="CW") m=0;
+  else if (m=="CWN") m=0;
   else if (m=="AM") m=1;
+  else if (m=="AMN") m=1;
+  else if (m=="AMV") m=1;
   else if (m=="FM") m=4;
+  else if (m=="FMN") m=4;
   try {
      soundapplet.setparam(
          "f="+freq
@@ -277,6 +283,11 @@ function fetchdx(b)
         if (xmlHttp.responseText!="") {
           eval(xmlHttp.responseText);
           showdx(b);
+          if(stationparam != null && stationparam)
+          {
+              setfreqstation(stationparam[1]);
+              stationparam = null;
+          }
         }
       }
     }
@@ -403,10 +414,16 @@ function set_mode(m)      // ...with appropriate filter
 {
    switch (m.toUpperCase()) {
       case "USB": setmf("usb", 0.3,  2.7); break;
+      case "USBN": setmf("usbn", 0.5, 2.2); break;
       case "LSB": setmf("lsb", -2.7, -0.3); break;
-      case "AM":  setmf("am", -4,  4); break;
-      case "CW":  setmf("cw", -0.95,  -0.55); break;
-      case "FM":  setmf("fm", -8,  8); break;
+      case "LSBN": setmf("lsbn", -2.2, 0.5); break;
+      case "AM":  setmf("am", -4, 4); break;
+      case "AMN":  setmf("amn", -2.5, 2.5); break;
+      case "AMV":  setmf("amv", -0.5, 0.5); break;
+      case "CW":  setmf("cw", 0.55, 0.95); break;
+      case "CWN":  setmf("cwn", 0.72, 0.78); break;
+      case "FM":  setmf("fm", -6 , 6); break;
+      case "FMN":  setmf("fmn", -3  , 3); break;
    }
 }
 
@@ -450,6 +467,21 @@ function setfreqtune(s)
    setfreqif(param[1]);
 }
 
+if(typeof(String.prototype.trim) === "undefined")
+{
+    String.prototype.trim = function() 
+    {
+        return String(this).replace(/^\s+|\s+$/g, '');
+    };
+}
+function setfreqstation(s)
+{
+    for (i=0;i<dxs.length;i++) {
+       if(dxs[i].text.trim() === s) {
+         setfreqm(b,dxs[i].freq,dxs[i].mode);
+      }
+    }
+}
 
 
 function mem_recall(i)
@@ -826,6 +858,7 @@ var uu_freqs=new Array();
 var others_colours=[ "#ff4040", "#ffa000", "#a0a000", "#80ff00", "#00ff00", "#00a0a0", "#0080ff", "#ff40ff"];
 
 var dxs=[];
+var stationparam=null;
 
 function uu(i, username, band, freq)
 // called by updates fetched from the server
@@ -864,6 +897,7 @@ function douu()
    }
    usersobj.innerHTML=s;
    numusersobj.innerHTML=total;
+   numusersobj2.innerHTML=total;
 }
 
 function setcompactview(c)
@@ -1213,7 +1247,7 @@ function bodyonload()
 
    var x= readCookie('username');
    var p=document.getElementById("please2");
-   if (!x && p) p.innerHTML="<b><i>Please type a name or callsign in the box at the <a href='#please'>top of the page</a> to identify your chat messages!</i></b>";
+   if (!x && p) p.innerHTML="<b><i>Please type a name or callsign in the box at the <a href='#please'>top of the chat box</a> to identify your chat messages!</i></b>";
 
    uu_compactview=document.getElementById("compactviewcheckbox").checked;
    document.getElementById("mutecheckbox").checked=false;
@@ -1273,6 +1307,7 @@ function bodyonload()
 
    statsobj = document.getElementById('stats');
    numusersobj = document.getElementById('numusers');
+   numusersobj2 = document.getElementById('numusers2');
    usersobj = document.getElementById('users');
 
    setview(view);
@@ -1286,6 +1321,8 @@ function bodyonload()
       set_mode(ini_mode);
    }
 
+   stationparam = (new RegExp("[?&]station=([^&#]*)").exec(window.location.href));
+   
    document_soundapplet();
 
    interval_ajax3 = setTimeout('ajaxFunction3()',1000);
@@ -1596,7 +1633,7 @@ var allowkeyboard;
 
 function keydown(e)
 {
-   if (!document.viewform.allowkeys.checked) return true;
+   if (!document.keysform.allowkeys.checked) return true;
    e = e ? e : window.event;
    if (!e.target) e.target = e.srcElement;
    if (e.target.nodeName=="INPUT" && e.target.type=="text" && e.target.name!="frequency") return true;  // don't intercept keys when typing in one of the text fields, except the frequency field
@@ -1609,8 +1646,8 @@ function keydown(e)
       case 39:                                                         // right arrow
       case 75: freqstep(st);                 return cancelEvent(e);    // K
       case 65: setmf ('am',  -4  ,  4  );    return cancelEvent(e);    // A
-      case 70: setmf ('fm',  -8  ,  8  );    return cancelEvent(e);    // F
-      case 67: setmf ('cw', -0.95, -0.55);   return cancelEvent(e);    // C
+      case 70: setmf ('fm',  -5  ,  5  );    return cancelEvent(e);    // F
+      case 67: setmf ('cw', 0.55, 0.95);   return cancelEvent(e);    // C
       case 76: setmf('lsb', -2.7, -0.3);     return cancelEvent(e);    // L
       case 85: setmf('usb',  0.3,  2.7);     return cancelEvent(e);    // U
       case 90: if (e.shiftKey) wfset(2); else wfset(4); return cancelEvent(e);   // Z
