@@ -1,3 +1,10 @@
 websdr
 websdr64
 websdr-rpi
+
+logs/
+userslog.txt
+log-cpuload.txt
+pub/logbook.txt
+pub2/tmp/
+fftw-wisdom.dat
