@@ -1,1 +1,8 @@
-10705998usb Es'hail-2 Beacon
+10489550cw Lower Beacon
+10489555usb CW ->
+10489600usb NB Digi ->
+10489620usb Digi ->
+10489640usb Mixed ->
+10489690usb SSB ->
+10489795usb <|
+10489798usb Upper Beacon
