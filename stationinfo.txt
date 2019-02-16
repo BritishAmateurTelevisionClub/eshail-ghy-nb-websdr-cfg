@@ -4,5 +4,5 @@
 10489620usb Digi ->
 10489640usb Mixed ->
 10489690usb SSB ->
-10489795usb <|
+10489795usb Guard Band ->
 10489798usb Upper Beacon
